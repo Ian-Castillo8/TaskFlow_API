@@ -67,10 +67,19 @@ def update_task(task_id):
         return jsonify({"error": "Task not found"}), 404
 
     data = request.get_json()
-    if data.get("title"): task.title = data["title"]
-    if data.get("description"): task.description = data["description"]
-    if data.get("is_completed") is not None: task.is_completed = data["is_completed"]
-    if data.get("due_date"): task.due_date = datetime.fromisoformat(data["due_date"])
+
+    if "description" in data:
+        task.description = data["description"]
+
+    if "is_completed" in data:
+        task.is_completed = data["is_completed"]
+
+    if "due_date" in data:
+        task.due_date = (
+            datetime.fromisoformat(data["due_date"])
+            if data["due_date"]
+            else None
+    )
 
     db.session.commit()
     return jsonify({"message": "Task updated"}), 200
